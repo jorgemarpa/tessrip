@@ -266,15 +266,23 @@ class Rip(object):
         tform = str(flux[0].size) + "E"
         dims = str(flux[0].shape[::-1])
 
-        flux, flux_err = fits.Column(
-            name="FLUX", format=tform, dim=dims, unit="e-/s", disp="E14.7", array=flux
-        ), fits.Column(
-            name="FLUX_ERR",
-            format=tform,
-            dim=dims,
-            unit="e-/s",
-            disp="E14.7",
-            array=flux_err,
+        flux, flux_err = (
+            fits.Column(
+                name="FLUX",
+                format=tform,
+                dim=dims,
+                unit="e-/s",
+                disp="E14.7",
+                array=flux,
+            ),
+            fits.Column(
+                name="FLUX_ERR",
+                format=tform,
+                dim=dims,
+                unit="e-/s",
+                disp="E14.7",
+                array=flux_err,
+            ),
         )
         return flux, flux_err
 
@@ -362,6 +370,8 @@ class Rip(object):
                 / np.median(self.last_hdulist[0].data["TELAPSE"])
             ).astype(int)
         )
+        # the diff method above misses the 0 index
+        cadence_number = np.concatenate([[0], cadence_number])
         return fits.Column(name="CADENCENO", format="I", array=cadence_number)
 
     @property
